@@ -1,0 +1,68 @@
+import os
+import random
+from tkinter import *
+
+password_list = []
+global text_field
+global password_readout
+
+class Window(Frame):
+
+    def __init__(self, master=None):
+        Frame.__init__(self, master=None)
+        self.master = master
+        self.__init__window()
+
+    def __init__window(self):
+        self.master.title("Password Generator")
+        self.pack(fill=BOTH, expand=1)
+        root.resizable(False, False)
+
+        menu = Menu(self.master)
+        self.master.config(menu=menu)
+
+        file = Menu(menu)
+        file.add_command(label="Exit", command=lambda: exit())
+        menu.add_cascade(label="File", menu=file)
+
+        label = Message(self)
+        label.configure(text="How many characters would you like your password to be?")
+        label.pack()
+
+        global text_field
+        text_field = Entry(self)
+        text_field.pack()
+
+        generate = Button(self)
+        generate.configure(text="Generate", command=lambda: self.generate())
+        generate.pack()
+
+        global password_readout
+        password_readout = Text(self)
+        password_readout.insert(INSERT, "")
+        password_readout.pack()
+
+    def generate(self):
+        global text_field
+
+        limit = int(text_field.get())
+        raw = os.urandom(limit)
+        str_raw = str(raw)
+        formatted = list(str_raw)
+
+        while limit > 0:
+            seed = random.SystemRandom()
+            add = seed.choice(formatted)
+            password_list.insert(len(password_list), add)
+            limit = limit-1
+
+        final_password = ''.join(password_list)
+        password_readout.insert(INSERT, final_password + "\n")
+        del password_list[:]
+
+
+
+root = Tk()
+root.geometry("250x250")
+pp = Window(root)
+root.mainloop()
